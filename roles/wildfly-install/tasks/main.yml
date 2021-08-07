@@ -18,19 +18,7 @@
         cmd: rpm -q java-1.8.0-openjdk
       register: rpm_check
       failed_when: rpm_check.rc == 1
-# you can comment this step if firewalld is not installed
-    - name: check if firewall is enabled
-      shell:
-        cmd: rpm -q firewalld
-      register: rpm_check_firewall
-# you can comment this step if firewalld is not installed
-    - name: Disable firewall
-      systemd: 
-        name: firewalld
-        state: stopped
-        enabled: false
-      when:
-        - rpm_check_firewall.rc == 0 
+
 
 
     - name: Download wildfly 
@@ -42,7 +30,7 @@
 
     - name: create link for /opt/wildfly
       file:
-        src: /wildfly-24.0.1.Final  
+        src: /{{wildfly_version}}  
         dest: /opt/wildfly
         state: link
     - file: 
@@ -53,7 +41,7 @@
 
     - name: change owner to wildfly user
       file:
-        path: /wildfly-24.0.1.Final
+        path: /{{wildfly_version}}
         owner: wildfly
         group: wildfly
         recurse: yes
